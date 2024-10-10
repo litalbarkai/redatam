@@ -11,7 +11,10 @@
 
 namespace RedatamLib
 {
-using std::string, std::vector, std::shared_ptr, std::pair;
+using std::pair;
+using std::shared_ptr;
+using std::string;
+using std::vector;
 
 class Entity {
 public:

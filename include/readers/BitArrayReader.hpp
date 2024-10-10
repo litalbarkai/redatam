@@ -7,7 +7,8 @@
 #include <cstdint>      //  uint16_t, uint32_t
 
 namespace RedatamLib {
-using std::vector, std::bitset;
+using std::bitset;
+using std::vector;
 
 class BitArrayReader
 {

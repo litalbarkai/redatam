@@ -7,14 +7,15 @@
 #include <QLineEdit>
 #include <QMessageBox>
 #include <QPushButton>
+#include <QTextEdit>
 #include <QUrl>
 #include <QVBoxLayout>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), process(new QProcess(this)) {
   // Set window geometry
-  setGeometry(0, 0, 400, 120);
-  setWindowTitle("MainWindow");
+  setGeometry(0, 0, 400, 300);
+  setWindowTitle("Open Redatam");
 
   // Central widget and layout
   QWidget *centralWidget = new QWidget(this);
@@ -41,6 +42,11 @@ MainWindow::MainWindow(QWidget *parent)
   QPushButton *convertButton = new QPushButton("Convert", this);
   vbox->addWidget(convertButton);
 
+  // Output text edit
+  outputTextEdit = new QTextEdit(this);
+  outputTextEdit->setReadOnly(true);
+  vbox->addWidget(outputTextEdit);
+
   // Footer
   QHBoxLayout *footerSizer = new QHBoxLayout();
   QLabel *footerText = new QLabel(this);
@@ -49,8 +55,8 @@ MainWindow::MainWindow(QWidget *parent)
   footerText->setOpenExternalLinks(true);
   footerText->setText(
       "The documentation and source code is available at: "
-      "<a href=\"https://github.com/litalbarkai/redatam-converter\">https://"
-      "github.com/litalbarkai/redatam-converter</a>");
+      "<a href=\"https://github.com/litalbarkai/open-redatam\">https://"
+      "github.com/litalbarkai/open-redatam</a>");
   footerSizer->addWidget(footerText);
   vbox->addLayout(footerSizer);
 
@@ -65,6 +71,10 @@ MainWindow::MainWindow(QWidget *parent)
   connect(process,
           QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this,
           &MainWindow::onProcessFinished);
+  connect(process, &QProcess::readyReadStandardOutput, this,
+          &MainWindow::onReadyReadStandardOutput);
+  connect(process, &QProcess::readyReadStandardError, this,
+          &MainWindow::onReadyReadStandardError);
 }
 
 MainWindow::~MainWindow() { delete process; }
@@ -72,7 +82,7 @@ MainWindow::~MainWindow() { delete process; }
 void MainWindow::onSelectInputFile() {
   QString fileName = QFileDialog::getOpenFileName(
       this, tr("Select Input File"), "",
-      tr("Dictionary Files (*.dic *.dicx);;All Files (*)"));
+      tr("Dictionary Files (*.dic *.dicx *.dicX *.DIC *.DICX)"));
   if (!fileName.isEmpty()) {
     inputFileText->setText(fileName);
   }
@@ -97,9 +107,20 @@ void MainWindow::onConvert() {
     return;
   }
 
+#ifdef _WIN32
+  // Replace forward slashes with backslashes for Windows
+  inputFilePath.replace("/", "\\");
+  outputDirPath.replace("/", "\\");
+#endif
+
   QString program = "redatam";
   QStringList arguments;
+
+#ifdef _WIN32
+  arguments << inputFilePath << outputDirPath + "\\";
+#else
   arguments << inputFilePath << outputDirPath + "/";
+#endif
 
   process->start(program, arguments);
   if (!process->waitForStarted()) {
@@ -121,4 +142,14 @@ void MainWindow::onProcessFinished(int exitCode,
   } else {
     QMessageBox::information(this, "Success", "Conversion successful!");
   }
+}
+
+void MainWindow::onReadyReadStandardOutput() {
+  QString output = process->readAllStandardOutput();
+  outputTextEdit->append(output);
+}
+
+void MainWindow::onReadyReadStandardError() {
+  QString error = process->readAllStandardError();
+  outputTextEdit->append(error);
 }

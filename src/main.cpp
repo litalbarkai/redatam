@@ -1,13 +1,43 @@
 #include <string>
-#include <iostream>     //  std::cerr, std::cout, std::endl
-#include <filesystem>   //  exists, create_directories
+#include <iostream>    // std::cerr, std::cout, std::endl
+
+#ifdef _WIN32
+#include <windows.h>
+#else
+#include <sys/stat.h>  // mkdir
+#include <unistd.h>    // access
+#endif
 
 #include "RedatamDatabase.hpp"
 
-using std::string, std::cerr, std::cout, std::endl;
-namespace fs = std::filesystem;
+using std::cerr;
+using std::cout;
+using std::endl;
+using std::string;
 
-int main(int argc, char *argv[])
+#ifdef _WIN32
+bool exists(const string& path)
+{
+    DWORD attr = GetFileAttributes(path.c_str());
+    return (attr != INVALID_FILE_ATTRIBUTES);
+}
+
+bool create_directories(const string& path)
+{
+    return CreateDirectory(path.c_str(), NULL) ||
+        GetLastError() == ERROR_ALREADY_EXISTS;
+}
+#else
+bool exists(const string& path) { return access(path.c_str(), F_OK) != -1; }
+
+bool create_directories(const string& path)
+{
+    mode_t mode = 0755;
+    return mkdir(path.c_str(), mode) == 0 || errno == EEXIST;
+}
+#endif
+
+int main(int argc, char* argv[])
 {
     if (argc != 3)
     {
@@ -18,9 +48,15 @@ int main(int argc, char *argv[])
     string dicFilePath = argv[1];
     string outputDirPath = argv[2];
 
-    if (!fs::exists(dicFilePath))
+    if (!exists(dicFilePath))
     {
         cerr << "Error: Input dictionary file does not exist." << endl;
+        return 1;
+    }
+
+    if (!create_directories(outputDirPath))
+    {
+        cerr << "Error: Failed to create output directory." << endl;
         return 1;
     }
 

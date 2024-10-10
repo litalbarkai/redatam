@@ -1,0 +1,5 @@
+variable;label
+PARROQ_REF_ID;Identifier for PARROQ
+CANTON_REF_ID;Parent entity Id
+I03;Identificador de parroquia
+NOMPARR;Nombre de parroquia

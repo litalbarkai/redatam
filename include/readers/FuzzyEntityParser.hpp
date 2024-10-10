@@ -11,7 +11,10 @@
 #include "ByteArrayReader.hpp"
 
 namespace RedatamLib {
-using std::vector, std::string, std::pair, std::unordered_map;
+using std::pair;
+using std::string;
+using std::unordered_map;
+using std::vector;
 
 class FuzzyEntityParser
 {

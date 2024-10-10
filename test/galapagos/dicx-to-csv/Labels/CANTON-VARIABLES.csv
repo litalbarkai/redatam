@@ -1,0 +1,5 @@
+variable;label
+CANTON_REF_ID;Identifier for CANTON
+PROVIN_REF_ID;Parent entity Id
+I02;Identificador de canton
+NOMCANT;Nombre de canton

@@ -127,9 +127,9 @@ bool ByteArrayReader::IsValidStr(const string& str)
         });
 }
 
-byte ByteArrayReader::ReadByte()
+unsigned char ByteArrayReader::ReadByte()
 {
-    byte ret = static_cast<byte>(m_data[m_currPos]);
+    unsigned char ret = m_data[m_currPos];
     MovePos(1);
 
     return ret;

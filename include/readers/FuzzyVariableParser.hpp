@@ -11,7 +11,9 @@
 #include "ByteArrayReader.hpp"
 
 namespace RedatamLib {
-using std::vector, std::string, std::pair;
+using std::pair;
+using std::string;
+using std::vector;
 
 class FuzzyVariableParser
 {

@@ -1,7 +1,7 @@
 Package: redatam
 Type: Package
 Title: Import 'REDATAM' Files 
-Version: 0.2
+Version: 0.2.1
 Authors@R: c(
     person(
         given = "Mauricio",
@@ -12,7 +12,16 @@ Authors@R: c(
     person(
         given = "Lital",
         family = "Barkai",
-        role = "aut")
+        role = "aut"),
+    person(
+        given = "Arseny",
+        family = "Kapoulkine",
+        role = "ctb",
+        comment = "'pugixml' C++ library"),
+    person(
+        family = "Republic of Ecuador",
+        role = "dtc",
+        comment = "Galapagos census data")
     )
 Imports:
     data.table,
@@ -28,8 +37,8 @@ Description: Import 'REDATAM' files into R. 'REDATAM' is a software for the
     functions to import 'REDATAM' files into R. It is based on De Grande (2016)
     <https://www.jstor.org/stable/24890658>.
 License: Apache License (>= 2)
-URL: https://github.com/litalbarkai/redatam-converter
-BugReports: https://github.com/litalbarkai/redatam-converter/issues
+URL: https://github.com/litalbarkai/open-redatam
+BugReports: https://github.com/litalbarkai/open-redatam/issues
 RoxygenNote: 7.3.1
 Encoding: UTF-8
 NeedsCompilation: yes

@@ -1,0 +1,47 @@
+name: Build Mac executables
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: macos-14
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up environment on Mac
+        run: |
+          brew install qt@5
+          echo "/opt/homebrew/opt/qt@5/bin" >> $GITHUB_PATH
+          echo "LDFLAGS=-L/opt/homebrew/opt/qt@5/lib" >> $GITHUB_ENV
+          echo "CPPFLAGS=-I/opt/homebrew/opt/qt@5/include" >> $GITHUB_ENV
+          echo "PKG_CONFIG_PATH=/opt/homebrew/opt/qt@5/lib/pkgconfig" >> $GITHUB_ENV
+
+      - name: Build redatam and redatamgui on Mac
+        run: make all
+
+      - name: Bundle Qt libraries on Mac
+        run: |
+          /opt/homebrew/opt/qt@5/bin/macdeployqt redatamgui
+
+      - name: Test redatam with a DIC file on Mac
+        run: ./redatam test/galapagos/cg15.dic test/galapagos/dic-to-csv
+
+      - name: Test redatam with a DICX file on Mac
+        run: ./redatam test/galapagos/cg15.dicX test/galapagos/dicx-to-csv
+
+      - name: Upload binaries on Mac
+        uses: actions/upload-artifact@v4
+        with:
+          name: redatam-mac
+          path: |
+            redatam
+            redatamgui
+            

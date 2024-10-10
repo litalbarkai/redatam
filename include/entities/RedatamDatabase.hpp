@@ -8,7 +8,8 @@
 
 namespace RedatamLib
 {
-using std::string, std::vector;
+using std::string;
+using std::vector;
 
 class RedatamDatabase
 {

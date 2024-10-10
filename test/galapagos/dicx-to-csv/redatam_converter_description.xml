@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<database>
+  <entity name="CG15" pointer="test/galapagos/cg150000.ptr">
+    <entity name="PROVIN" pointer="test/galapagos/cg150001.ptr">
+      <variable name="I01" label="Identificador de provincia" type="STRING" size="2" decimals="0" range="" filter="" data="test/galapagos/cg150001.rbf" />
+      <variable name="NOMPROV" label="Nombre de provincia" type="STRING" size="15" decimals="0" range="" filter="" data="test/galapagos/cg150104.rbf">
+        <valueLabels>
+          <valueLabel name="Identificador" value="de provincia" />
+          <valueLabel name="" value="MISSING" />
+          <valueLabel name="" value="NOTAPPLICABLE" />
+        </valueLabels>
+      </variable>
+      <entity name="CANTON" pointer="test/galapagos/cg150002.ptr">
+        <variable name="I02" label="Identificador de canton" type="STRING" size="2" decimals="0" range="" filter="" data="test/galapagos/cg150002.rbf" />
+        <variable name="NOMCANT" label="Nombre de canton" type="STRING" size="20" decimals="0" range="" filter="" data="test/galapagos/cg150112.rbf">
+          <valueLabels>
+            <valueLabel name="Identificador" value="de canton" />
+            <valueLabel name="" value="MISSING" />
+            <valueLabel name="" value="NOTAPPLICABLE" />
+          </valueLabels>
+        </variable>
+        <entity name="PARROQ" pointer="test/galapagos/cg150003.ptr">
+          <variable name="I03" label="Identificador de parroquia" type="STRING" size="2" decimals="0" range="" filter="" data="test/galapagos/cg150003.rbf" />
+          <variable name="NOMPARR" label="Nombre de parroquia" type="STRING" size="25" decimals="0" range="" filter="" data="test/galapagos/cg150120.rbf">
+            <valueLabels>
+              <valueLabel name="Identificador" value="de parroquia" />
+              <valueLabel name="" value="MISSING" />
+              <valueLabel name="" value="NOTAPPLICABLE" />
+            </valueLabels>
+          </variable>
+          <entity name="ZONA" pointer="test/galapagos/cg150004.ptr">
+            <variable name="I04" label="Identificdor de zona" type="STRING" size="2" decimals="0" range="" filter="" data="test/galapagos/cg150004.rbf" />
+          </entity>
+        </entity>
+      </entity>
+    </entity>
+  </entity>
+</database>

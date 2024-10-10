@@ -17,7 +17,7 @@ for file in $(find downloads -type f -name "*.dicx"); do
 
   dirname=$(dirname "$file")
   dirname=$(echo "$dirname" | cut -d'/' -f1,2)
-  dirname="$dirname/redatam-converter-cpp/"
+  dirname="$dirname/open-redatam-cpp/"
   mkdir -p "$dirname"
   
   if [ $(ls -1 "$dirname" | wc -l) -eq 0 ]; then
@@ -35,7 +35,7 @@ for file in $(find downloads -type f -name "*.dic"); do
 
   dirname=$(dirname "$file")
   dirname=$(echo "$dirname" | cut -d'/' -f1,2)
-  dirname="$dirname/redatam-converter-cpp/"
+  dirname="$dirname/open-redatam-cpp/"
   mkdir -p "$dirname"
   
   if [ $(ls -1 "$dirname" | wc -l) -eq 0 ]; then

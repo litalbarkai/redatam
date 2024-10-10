@@ -20,9 +20,14 @@ string FindRootPath(const string& fileName) {
 
 string GetFileName(const string& fullPath) {
   // Find the position of the last path separator (either '/' or '\')
-  // '/' Unix; '\\' Windows
-  size_t pos =
-      std::min(fullPath.find_last_of('/'), fullPath.find_last_of('\\'));
+  size_t posSlash = fullPath.find_last_of('/');
+  size_t posBackslash = fullPath.find_last_of('\\');
+
+  // Use parentheses around std::min to deambiguate min on Windows
+  size_t pos = (posSlash == string::npos) ? posBackslash
+               : (posBackslash == string::npos)
+                   ? posSlash
+                   : (std::min)(posSlash, posBackslash);
 
   return (pos == string::npos) ? fullPath : fullPath.substr(pos + 1);
 }

@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.14)
 project(redatamgui)
 
 # Set C++ standard
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Find Qt5
@@ -14,18 +14,23 @@ find_package(Qt5 COMPONENTS Widgets REQUIRED)
 # Include directories
 include_directories(
     ${Qt5Widgets_INCLUDE_DIRS}
-    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/../gui
 )
 
 # Source files
 set(GUI_FILES
-    ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/mainwindow.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/mainwindow.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/../gui/main.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../gui/mainwindow.cpp
+)
+
+# Header files for MOC
+set(GUI_HEADERS
+    ${CMAKE_CURRENT_SOURCE_DIR}/../gui/mainwindow.h
 )
 
 # Debug output to check if files are found
 message(STATUS "GUI_FILES: ${GUI_FILES}")
+message(STATUS "GUI_HEADERS: ${GUI_HEADERS}")
 
 # Check if any source files were found
 if(NOT GUI_FILES)
@@ -33,7 +38,7 @@ if(NOT GUI_FILES)
 endif()
 
 # Qt5 wrap MOC
-qt5_wrap_cpp(MOC_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/mainwindow.h)
+qt5_wrap_cpp(MOC_SOURCES ${GUI_HEADERS})
 
 # Add executable
 add_executable(${PROJECT_NAME} ${GUI_FILES} ${MOC_SOURCES})

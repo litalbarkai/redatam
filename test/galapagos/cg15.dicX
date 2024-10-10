@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<redDictionary_XML>
+  <general>
+    <typeType>DICX</typeType>
+    <name>CG15.dicX</name>
+    <created>20241003</created>
+    <updated>20241003</updated>
+    <version>
+      <major>7</major>
+      <minor>0</minor>
+      <revision>0</revision>
+      <construction>0</construction>
+    </version>
+    <security>123=HM8=7ntoe@?BECCDHHGJMKKLPNORWejUZvywsyon|t|lmnopqrstuvwxz~</security>
+  </general>
+  <root>
+    <name>CG15</name>
+    <filename>.\cg150000.ptr</filename>
+    <tag>100</tag>
+    <entity>
+      <name>PROVIN</name>
+      <label>Provincia de empadronamiento</label>
+      <selectable>true</selectable>
+      <refCode>I01</refCode>
+      <refLabel>NOMPROV</refLabel>
+      <filename>.\cg150001.ptr</filename>
+      <tag>101</tag>
+      <variable>
+        <name>I01</name>
+        <label>Identificador de provincia</label>
+        <varType>STRING</varType>
+        <fieldSize>2</fieldSize>
+        <tag>1</tag>
+        <datasetID/>
+        <filename>.\cg150001.rbf</filename>
+        <varDicChoice>
+          <datasetType>CHR</datasetType>
+          <datasetSize>2</datasetSize>
+        </varDicChoice>
+      </variable>
+      <variable>
+        <name>NOMPROV</name>
+        <label>Nombre de provincia</label>
+        <varType>STRING</varType>
+        <fieldSize>15</fieldSize>
+        <tag>104</tag>
+        <valueLabels>
+          <valueLabelElement>
+            <value>Identificador</value>
+            <label>de provincia</label>
+          </valueLabelElement>
+        </valueLabels>
+        <datasetID/>
+        <filename>.\\cg150104.rbf</filename>
+        <varDicChoice>
+          <datasetType>CHR</datasetType>
+          <datasetSize>15</datasetSize>
+        </varDicChoice>
+      </variable>
+      <entity>
+        <name>CANTON</name>
+        <label>Canton de empadronamiento</label>
+        <selectable>true</selectable>
+        <refCode>I02</refCode>
+        <refLabel>NOMCANT</refLabel>
+        <filename>.\cg150002.ptr</filename>
+        <tag>102</tag>
+        <variable>
+          <name>I02</name>
+          <label>Identificador de canton</label>
+          <varType>STRING</varType>
+          <fieldSize>2</fieldSize>
+          <tag>2</tag>
+          <datasetID/>
+          <filename>.\cg150002.rbf</filename>
+          <varDicChoice>
+            <datasetType>CHR</datasetType>
+            <datasetSize>2</datasetSize>
+          </varDicChoice>
+        </variable>
+        <variable>
+          <name>NOMCANT</name>
+          <label>Nombre de canton</label>
+          <varType>STRING</varType>
+          <fieldSize>20</fieldSize>
+          <tag>112</tag>
+          <valueLabels>
+            <valueLabelElement>
+              <value>Identificador</value>
+              <label>de canton</label>
+            </valueLabelElement>
+          </valueLabels>
+          <datasetID/>
+          <filename>.\\cg150112.rbf</filename>
+          <varDicChoice>
+            <datasetType>CHR</datasetType>
+            <datasetSize>20</datasetSize>
+          </varDicChoice>
+        </variable>
+        <entity>
+          <name>PARROQ</name>
+          <label>Parroquia de empadronamiento</label>
+          <selectable>true</selectable>
+          <refCode>I03</refCode>
+          <refLabel>NOMPARR</refLabel>
+          <filename>.\cg150003.ptr</filename>
+          <tag>103</tag>
+          <variable>
+            <name>I03</name>
+            <label>Identificador de parroquia</label>
+            <varType>STRING</varType>
+            <fieldSize>2</fieldSize>
+            <tag>3</tag>
+            <datasetID/>
+            <filename>.\cg150003.rbf</filename>
+            <varDicChoice>
+              <datasetType>CHR</datasetType>
+              <datasetSize>2</datasetSize>
+            </varDicChoice>
+          </variable>
+          <variable>
+            <name>NOMPARR</name>
+            <label>Nombre de parroquia</label>
+            <varType>STRING</varType>
+            <fieldSize>25</fieldSize>
+            <tag>120</tag>
+            <valueLabels>
+              <valueLabelElement>
+                <value>Identificador</value>
+                <label>de parroquia</label>
+              </valueLabelElement>
+            </valueLabels>
+            <datasetID/>
+            <filename>.\\cg150120.rbf</filename>
+            <varDicChoice>
+              <datasetType>CHR</datasetType>
+              <datasetSize>25</datasetSize>
+            </varDicChoice>
+          </variable>
+          <entity>
+            <name>ZONA</name>
+            <selectable>true</selectable>
+            <refCode>I04</refCode>
+            <filename>.\cg150004.ptr</filename>
+            <tag>104</tag>
+            <variable>
+              <name>I04</name>
+              <label>Identificdor de zona</label>
+              <varType>STRING</varType>
+              <fieldSize>2</fieldSize>
+              <tag>4</tag>
+              <datasetID/>
+              <filename>.\cg150004.rbf</filename>
+              <varDicChoice>
+                <datasetType>CHR</datasetType>
+                <datasetSize>2</datasetSize>
+              </varDicChoice>
+            </variable>
+          </entity>
+        </entity>
+      </entity>
+    </entity>
+  </root>
+</redDictionary_XML>

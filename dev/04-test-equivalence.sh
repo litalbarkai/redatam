@@ -42,7 +42,7 @@ for dicx_file in "${dicx_files[@]}"; do
   filenamenoext=$(basename "$dicx_file" .dicx)
   filenamenoext=$(echo "$filenamenoext" | sed 's/\.dicX//')
 
-  dirname="$dirname/$filenamenoext-redatam-converter-cpp/"
+  dirname="$dirname/$filenamenoext-open-redatam-cpp/"
   mkdir -p "$dirname"
   
   if [ $(ls -1 "$dirname" | wc -l) -eq 0 ]; then

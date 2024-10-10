@@ -13,7 +13,9 @@
 
 namespace RedatamLib
 {
-using std::string, std::vector, std::invalid_argument;
+using std::string;
+using std::vector;
+using std::invalid_argument;
 
 RedatamDatabase::RedatamDatabase(const string& fileName)
 {

@@ -1,0 +1,5 @@
+variable;label
+PROVIN_REF_ID;Identifier for PROVIN
+CG15_REF_ID;Parent entity Id
+I01;Identificador de provincia
+NOMPROV;Nombre de provincia

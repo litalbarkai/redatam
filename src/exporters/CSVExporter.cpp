@@ -1,4 +1,3 @@
-#include <filesystem>
 #include <sstream>          //  std::ostringstream
 #include <fstream>          //  std::ofstream
 #include <iostream>         //  std::endl
@@ -10,8 +9,9 @@
 
 namespace RedatamLib
 {
-using std::ostringstream, std::ofstream, std::endl;
-namespace fs = std::filesystem;
+using std::endl;
+using std::ofstream;
+using std::ostringstream;
 
 CSVExporter::CSVExporter(const string& outputDirectory) : m_path(outputDirectory)
 {
@@ -20,10 +20,9 @@ CSVExporter::CSVExporter(const string& outputDirectory) : m_path(outputDirectory
         m_path.append("/");
     }
 
-    fs::path p = m_path;
-    if (!fs::exists(p.append("Labels/")))
-    {
-        create_directories(p);
+    std::string labels_path = m_path + "Labels/";
+    if (!exists(labels_path)) {
+      create_directories(labels_path);
     }
 }
 
@@ -71,7 +70,7 @@ void CSVExporter::CreateVariablesLegend(std::mutex& mutex, Entity& e, const stri
         os << v.GetName() << ";" << v.GetDescription() << endl;
     }
 
-    std::lock_guard lock(mutex);
+    std::lock_guard<std::mutex> lock(mutex);
     ofstream fs(outputDirectory + "Labels/" + entityName + "-VARIABLES.csv");
     ThrowIfBad<std::ios_base::failure>(fs.is_open(),
         std::ios_base::failure("Error: Failed to create file."));
@@ -95,7 +94,7 @@ void CSVExporter::CreateVariablesLabels(std::mutex& mutex, Entity& e, const stri
                 os << t.first << ";" << t.second << endl;
             }
 
-            std::lock_guard lock(mutex);
+            std::lock_guard<std::mutex> lock(mutex);
             ofstream fs(path + v.GetName() + "-LABELS.csv");
             ThrowIfBad<std::ios_base::failure>(fs.is_open(),
                 std::ios_base::failure("Error: Failed to create file."));
@@ -156,7 +155,7 @@ void CSVExporter::CreateVariablesData(std::mutex& mutex, Entity& e, const string
         }
     }
 
-    std::lock_guard lock(mutex);
+    std::lock_guard<std::mutex> lock(mutex);
     ofstream fs(outputDirectory + e.GetName() + ".csv");
     ThrowIfBad<std::ios_base::failure>(fs.is_open(),
         std::ios_base::failure("Error: Failed to create file."));
@@ -167,7 +166,7 @@ void CSVExporter::CreateVariablesData(std::mutex& mutex, Entity& e, const string
 void CSVExporter::ThreadExport(std::mutex& mutex,
                     size_t start, size_t end,
                     vector<Entity>& entities,
-                    const string&  outputDirectory)
+                    const string& outputDirectory)
 {
     for (size_t i = start; i < end; ++i)
     {

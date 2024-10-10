@@ -1,35 +1,22 @@
 #include <algorithm>    //  std::replace
 
 #include "XMLParser.hpp"
-#include "XMLUtils.hpp"
 #include "utils.hpp"
 
 namespace RedatamLib
 {
-using std::cerr, std::endl;
+using std::cerr;
+using std::endl;
 
-XMLParser::XMLParser()
+// Constructor
+XMLParser::XMLParser() 
 {
-    try
-    {
-        XMLPlatformUtils::Initialize();
-
-        m_parser = new XercesDOMParser();
-        m_parser->setValidationScheme(XercesDOMParser::Val_Never); // No validation
-    }
-    catch(const XMLException& e)
-    {
-        cerr << "Error in Xerces initialization: " << TranscodeStr(e.getMessage()) << endl;
-        throw;
-    }
+  // No need for initialization, PugiXML handles everything internally
 }
 
-XMLParser::~XMLParser()
-{
-    delete m_parser;
-    m_parser = nullptr;
-
-    XMLPlatformUtils::Terminate();
+// Destructor
+XMLParser::~XMLParser(){
+  // No need for explicit cleanup, PugiXML handles resource management
 }
 
 vector<Entity> XMLParser::ParseFile(const string& fileName)
@@ -40,81 +27,78 @@ vector<Entity> XMLParser::ParseFile(const string& fileName)
 
     try
     {
-        m_parser->parse(fileName.c_str());
-        DOMDocument* xmlDoc = m_parser->getDocument();
-        DOMElement* rootElement = static_cast<DOMElement*>(xmlDoc->
-            getDocumentElement()->
-            getElementsByTagName(XMLString::transcode("root"))->item(0));
+        pugi::xml_document doc;
+        pugi::xml_parse_result result = doc.load_file(fileName.c_str());
+        if (!result) {
+            std::string errorMsg =
+                "Error parsing file: " + std::string(result.description());
+            throw std::runtime_error(errorMsg);
+        }
 
-        DOMElement* child = ParseEntity(&ret, rootElement);
-        while (nullptr != child)
+        // Look for the correct root element
+        pugi::xml_node redDictionaryNode = doc.child("redDictionary_XML");
+        if (!redDictionaryNode) {
+            throw std::runtime_error("redDictionary_XML element not found");
+        }
+
+        pugi::xml_node rootElement = redDictionaryNode.child("root");
+        if (!rootElement) {
+            throw std::runtime_error("Root element not found");
+        }
+
+        pugi::xml_node child = ParseEntity(&ret, rootElement);
+        while (child)
         {
             child = ParseEntity(&ret, child, ret.back().GetName());
         }
-        
+
         for (size_t idx = 0; idx < ret.size() - 1; ++idx)
         {
             ret[idx].AttachChild(&ret[idx + 1]);
         }
     }
-    catch(const XMLException& e)
+    catch(const std::exception& e)
     {
-        cerr << TranscodeStr(e.getMessage()) << endl;
-        throw;
-    }
-    catch(const DOMException& e)
-    {
-        cerr << TranscodeStr(e.getMessage()) << endl;
+        std::string errorMsg = "Error: " + std::string(e.what());
+        cerr << errorMsg << endl;
         throw;
     }
 
     return ret;
 }
 
-string XMLParser::GetTagValue(DOMElement* element, const string& tag, size_t idx)
+string XMLParser::GetTagValue(pugi::xml_node node, const string& tag, size_t idx)
 {
-    vector<DOMElement*> children = GetChildren(element, tag);
-
-    return (children.size() > idx) ?
-        TranscodeStr(children[idx]->getTextContent()) :
-        "";
+    pugi::xml_node child = node.child(tag.c_str());
+    return child ? child.child_value() : "";
 }
 
-DOMElement* XMLParser::ParseEntity(vector<Entity>* results, DOMElement* e, const string& parentName)
+pugi::xml_node XMLParser::ParseEntity(vector<Entity>* results, pugi::xml_node node, const string& parentName)
 {
-    string name = GetTagValue(e, "name");
+    string name = GetTagValue(node, "name");
 
-    string description = GetTagValue(e, "label");
-    
-    string idxFileName = GetTagValue(e, "filename");
+    string description = GetTagValue(node, "label");
+
+    string idxFileName = GetTagValue(node, "filename");
     idxFileName = ReplaceRootPath(m_rootPath, idxFileName);
 
     Entity curr(name, parentName, description, idxFileName, pair<size_t, size_t>(0, 0));
 
-    shared_ptr<vector<Variable>> variables = ParseVariables(e);
+    shared_ptr<vector<Variable>> variables = ParseVariables(node);
     curr.AttachVariables(variables);
 
     results->push_back(curr);
 
-    vector<DOMElement*> children = GetChildren(e, "entity");
-    if (0 != children.size())
-    {
-        return static_cast<DOMElement*>(children[0]);
-    }
-
-    return nullptr;
+    pugi::xml_node child = node.child("entity");
+    return child;
 }
 
-shared_ptr<vector<Variable>> XMLParser::ParseVariables(DOMElement* e)
+shared_ptr<vector<Variable>> XMLParser::ParseVariables(pugi::xml_node node)
 {
     shared_ptr<vector<Variable>> ret(new vector<Variable>);
 
-    vector<DOMElement*> vars = GetChildren(e, "variable");
-
-    for (size_t idx = 0; idx < vars.size(); ++idx)
+    for (pugi::xml_node var : node.children("variable"))
     {
-        DOMElement* var = vars[idx];
-
         string name = GetTagValue(var, "name");
 
         pair<VarType, size_t> typeDetails = ParseVarTypeAndSize(var);
@@ -129,47 +113,36 @@ shared_ptr<vector<Variable>> XMLParser::ParseVariables(DOMElement* e)
         vector<Tag> tags = ParseVarTags(var);
 
         string description = GetTagValue(var, "label");
-        
+
         string decimalsStr = GetTagValue(var, "decimals");
         size_t decimals = decimalsStr.empty() ? 0 : std::stoi(decimalsStr);
 
-        ret->push_back(Variable(name,
-                                typeDetails.first,
-                                idxFileName,
-                                typeDetails.second,
-                                filter,
-                                range,
-                                tags,
-                                description,
-                                decimals));
+        ret->push_back(Variable(name, typeDetails.first, idxFileName,
+                            typeDetails.second, filter, range, tags,
+                            description, decimals));
     }
 
     return ret;
 }
 
-vector<DOMElement*> XMLParser::GetChildren(DOMElement* parent, const string& tag)
+vector<pugi::xml_node> XMLParser::GetChildren(pugi::xml_node parent, const string& tag)
 {
-    vector<DOMElement*> children;
-    
-    DOMElement* currElement = static_cast<DOMElement*>(parent->getFirstChild());
+    vector<pugi::xml_node> children;
 
-    while (nullptr != currElement)
+    for (pugi::xml_node currElement = parent.first_child(); currElement; currElement = currElement.next_sibling())
     {
-        if (tag.c_str() == TranscodeStr(currElement->getTagName()))
+        if (tag == currElement.name())
         {
-            children.push_back(currElement);
+        children.push_back(currElement);
         }
-
-        currElement = static_cast<DOMElement*>(currElement->getNextSibling());
     }
 
     return children;
 }
 
-pair<VarType, size_t> XMLParser::ParseVarTypeAndSize(DOMElement* var)
+pair<VarType, size_t> XMLParser::ParseVarTypeAndSize(pugi::xml_node var)
 {
-    DOMElement* details = static_cast<DOMElement*>(
-        var->getElementsByTagName(XMLString::transcode("varDicChoice"))->item(0));
+    pugi::xml_node details = var.child("varDicChoice");
 
     VarType varType = NA;
     string type = GetTagValue(details, "datasetType");
@@ -203,15 +176,13 @@ pair<VarType, size_t> XMLParser::ParseVarTypeAndSize(DOMElement* var)
     return {varType, size};
 }
 
-string XMLParser::ParseVarRange(DOMElement* var)
+string XMLParser::ParseVarRange(pugi::xml_node var)
 {
-    DOMNodeList* rangeTags = var->getElementsByTagName(XMLString::transcode("range"));
-    if (0 == rangeTags->getLength())
+    pugi::xml_node rangeTag = var.child("range");
+    if (!rangeTag)
     {
         return "";
     }
-
-    DOMElement* rangeTag = static_cast<DOMElement*>(rangeTags->item(0));
 
     string ret = GetTagValue(rangeTag, "rangeMin");
     if (!ret.empty())
@@ -223,25 +194,21 @@ string XMLParser::ParseVarRange(DOMElement* var)
     return ret;
 }
 
-vector<Tag> XMLParser::ParseVarTags(DOMElement* var)
+vector<Tag> XMLParser::ParseVarTags(pugi::xml_node var)
 {
     vector<Tag> ret;
 
-    DOMNodeList* valueLabelTag = var->getElementsByTagName(XMLString::transcode("valueLabels"));
-    if (0 == valueLabelTag->getLength())
+    pugi::xml_node valueLabelTag = var.child("valueLabels");
+    if (!valueLabelTag)
     {
         return ret;
     }
-    DOMNodeList* valueLabels = static_cast<DOMElement*>(valueLabelTag->item(0))
-        ->getElementsByTagName(XMLString::transcode("valueLabelElement"));
-    
-    for (size_t idx = 0; idx < valueLabels->getLength(); ++idx)
+
+    for (pugi::xml_node valueLabel : valueLabelTag.children("valueLabelElement"))
     {
-        string key = GetTagValue(static_cast<DOMElement*>(valueLabels->item(idx)),
-                                "value");
-        string value = GetTagValue(static_cast<DOMElement*>(valueLabels->item(idx)),
-                                "label");
-        
+        string key = GetTagValue(valueLabel, "value");
+        string value = GetTagValue(valueLabel, "label");
+
         ret.push_back(Tag(key, value));
     }
 

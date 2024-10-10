@@ -9,8 +9,10 @@
 #include <cstdint>      //  uint16_t, uint32_t
 
 namespace RedatamLib {
-using std::vector, std::string, std::byte;
-using std::out_of_range, std::length_error;
+using std::length_error;
+using std::out_of_range;
+using std::string;
+using std::vector;
 
 class ByteArrayReader
 {
@@ -41,7 +43,7 @@ public:
     string GetFormerString();
 
     //  throws std::out_of_range; LE = little-endian, BE = big-endian
-    byte ReadByte();
+    unsigned char ReadByte();
     uint16_t ReadInt16LE();
     uint32_t ReadInt32LE();
     uint16_t ReadInt16BE();
